@@ -1,7 +1,5 @@
 package DDBB;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 /**
@@ -15,17 +13,16 @@ public class Jugador {
     private String apellido = "";
     private double altura = 0.0;
     private Caracteristicas caracteristicas;
+    private Equipo equipo;
 
 
-    public void seRetira(){
-
+    public void traspaso(int indexActual, Equipo nuevoEquipo){
+        equipo.seRetiraJugador(indexActual);
+        setEquipo(nuevoEquipo);
+        nuevoEquipo.addJugador(this);
     }
 
-    public void traspaso(){
-
-    }
-
-    //constr
+   //constr
 
     public Jugador(){}
 
@@ -74,6 +71,13 @@ public class Jugador {
     public Caracteristicas getCaracteristicas() {
         return this.caracteristicas;
     }
+
+    public void setCaracteristicas(Caracteristicas caracteristicas) { this.caracteristicas = caracteristicas; }
+
+
+    public Equipo getEquipo() { return equipo; }
+
+    public void setEquipo(Equipo equipo) { this.equipo = equipo; }
 
     public String toStringSimple(){
         return          "[Jugador: " +

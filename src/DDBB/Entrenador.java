@@ -7,9 +7,12 @@ public class Entrenador {
 
     private String nombre = "";
     private int anyosExperiencia;
+    private Equipo equipo;
 
-    public void cambioEquipo(){
-
+    public void cambioEquipo(Equipo equipoNuevo){
+        this.equipo.setEntrenador(null);
+        setEquipo(equipoNuevo);
+        equipoNuevo.setEntrenador(this);
     }
 
     //constr
@@ -37,4 +40,7 @@ public class Entrenador {
         this.anyosExperiencia = anyosExperiencia;
     }
 
+    public Equipo getEquipo() { return equipo; }
+
+    public void setEquipo(Equipo equipo) { this.equipo = equipo; }
 }

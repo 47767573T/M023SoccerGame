@@ -1,9 +1,8 @@
+import DDBB.*;
 import com.db4o.ObjectContainer;
 import com.db4o.ObjectSet;
-import DDBB.*;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -13,10 +12,14 @@ import java.util.Scanner;
 public class Main {
 
     static ObjectContainer db = null;
+    private static Liga liga1;
+    private static Liga liga2;
 
     public static void main(String[] args) throws Exception {
 
         Scanner input = new Scanner(System.in);
+        liga1 = new Liga("1A-Division", 1, "BBVA");
+        liga2 = new Liga("2A-Division", 2, "Danone");
 
 
         try {
@@ -40,16 +43,10 @@ public class Main {
             boolean on = true;//condicio de sortida del programa
 
             //DEFINIMOS TODA LA LIGA CON VARIABLES AL AZAR PARA TESTEO
+
             ArrayList <Equipo> newTeam = genEquiposAzar(5);
             guardarEquipos(newTeam);
 
-            Liga liga = new Liga("1A-Division", 1, "BBVA");
-
-
-
-            //public Liga(String nombre, int categoria, String patrocinador)
-            Liga liga1 = new Liga("1a Division", 1, "Telecinco");
-            Liga liga2 = new Liga("2a Division", 2, "tve2");
 
             //-----------------------------------------------------------
 
@@ -77,6 +74,7 @@ public class Main {
                         break;
                     }
 
+                    //BUSQUEDA JUGADORES DE UN EQUIPO
                     case "1": {
                         Scanner scn = new Scanner(System.in);
                         System.out.println("Elige equipo:\n");
@@ -86,6 +84,7 @@ public class Main {
                         break;
                     }
 
+                    //BUSQUEDA DE JUGADORES DE DOS EQUIPOS MEDIANTE SODA
                     case "2": {
 
 
@@ -186,6 +185,10 @@ public class Main {
                     ,genEntrenadorAzar()
             );
             t.setJugadores(genJugadoresAzar(10));
+
+            if (i%2 == 0) t.setLiga(liga1);
+            else t.setLiga(liga2);
+
             equipo.add(t);
             System.out.println("Creado Equipo:"+t.getNombre());
         }
