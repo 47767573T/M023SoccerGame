@@ -60,5 +60,11 @@ public class Liga {
 
     public List<Equipo> getEquipos() { return equipos; }
 
-
+    public String toString(){
+        String es = "";
+        for(int i = 0; i < equipos.size(); i++){
+            es = es + "\n\t" + equipos.get(i).toStringSimple();
+        }
+        return es;
+    }
 }

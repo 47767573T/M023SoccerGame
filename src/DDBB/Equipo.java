@@ -93,7 +93,8 @@ public class Equipo {
                         js + "]";
     }
 
-
-
-
+    public String toStringSimple(){
+        return  "[nombre = " + nombre +
+                " ,estadio = " + estadio+"]";
+    }
 }

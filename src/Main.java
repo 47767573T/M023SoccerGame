@@ -1,8 +1,10 @@
 import DDBB.*;
 import com.db4o.ObjectContainer;
 import com.db4o.ObjectSet;
+import com.db4o.query.Query;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -18,26 +20,11 @@ public class Main {
     public static void main(String[] args) throws Exception {
 
         Scanner input = new Scanner(System.in);
-        liga1 = new Liga("1A-Division", 1, "BBVA");
-        liga2 = new Liga("2A-Division", 2, "Danone");
+        liga1 = new Liga("Division1", 1, "BBVA");
+        liga2 = new Liga("Division2", 1, "Danone");
 
 
         try {
-            //db = Db4o.openFile("persons.data"); //deprecated
-            //db = Db4oEmbedded.OpenFile(Db4oEmbedded.NewConfiguration(), YapFileName);
-
-            /*
-            Person brian = new Person("Brian", "Goetz", 39);
-            db.store(brian);
-            db.commit();
-            // Find all the Brians
-            ObjectSet objBrian = db.queryByExample(new Person("Brian", null, 0));
-            while (objBrian.hasNext())
-                System.out.println(objBrian.next());
-             */
-
-            //db = Db4oEmbedded.openFile("soccerData.db");
-
             db = DataConnection.getInstance();
             String menu;
             boolean on = true;//condicio de sortida del programa
@@ -62,7 +49,7 @@ public class Main {
                 System.out.println("4--> Jugadores pertenecientes a una Liga");
                 System.out.println("5--> Características de un jugador dado");
                 System.out.println("6--> Jugadores que pertenece a un entrenador dado");
-                System.out.println("7--> Equipos de una liga en concreta");
+                System.out.println("7--> Equipos de una liga en concreto");
                 System.out.println("0--> Salir del programa");
                 System.out.println(" ");
                 menu = input.nextLine();
@@ -78,7 +65,7 @@ public class Main {
                     case "1": {
                         Scanner scn = new Scanner(System.in);
                         System.out.println("Elige equipo:\n");
-                        busquedaPorEquipo(scn.nextLine());
+                        busquedaEquipo(scn.nextLine());
 
                         //scn.close();
                         break;
@@ -86,22 +73,55 @@ public class Main {
 
                     //BUSQUEDA DE JUGADORES DE DOS EQUIPOS MEDIANTE SODA
                     case "2": {
+                        Scanner scn = new Scanner(System.in);
+                        System.out.println("Elige el primer equipo:\n");
+                        String equipo1 = scn.nextLine();
+                        System.out.println("Elige el segundo equipo:\n");
+                        String equipo2 = scn.nextLine();
 
+                        busquedaEquipoSODA(equipo1);
+                        busquedaEquipoSODA(equipo2);
 
                         break;
                     }
 
                     case "3": {
-
+                        Scanner scn = new Scanner(System.in);
+                        System.out.println("Elige equipo:\n");
+                        busquedaJugadorSegunFuerza(scn.nextLine());
                         break;
                     }
 
                     case "4": {
-
+                        Scanner scn = new Scanner(System.in);
+                        System.out.println("Elige liga:\n");
+                        busquedaJugadorSegunLiga(scn.nextLine());
                         break;
                     }
 
                     case "5": {
+                        Scanner scn = new Scanner(System.in);
+                        System.out.println("Elija nombre de Jugador:\n");
+                        String nombre = scn.nextLine();
+                        System.out.println("Escribe su apellido:\n");
+                        String apellido = scn.nextLine();
+
+                        busquedaCaracteristicasSegunJugador(nombre, apellido);
+                        break;
+                    }
+
+                    case "6": {
+
+
+
+                        break;
+                    }
+
+                    case "7": {
+
+                        Scanner scn = new Scanner(System.in);
+                        System.out.println("Elige liga:\n");
+                        busquedaEquiposSegunLiga(scn.nextLine());
 
                         break;
                     }
@@ -122,12 +142,8 @@ public class Main {
 
     }//main
 
-    private static void jugadoresDeUnEquipoSolicitado() {
 
-
-    }
-
-    private static void busquedaPorEquipo(String nombre){
+    private static void busquedaEquipo(String nombre){
 
         ObjectSet<Equipo> result = db.queryByExample(new Equipo(nombre, null, null));
         System.out.println("Resultados: " + result.size());
@@ -140,6 +156,76 @@ public class Main {
         }
     }
 
+
+    private static void busquedaEquipoSODA(String equipo){
+
+        Query query = db.query();
+        query.constrain(Equipo.class);
+        query.descend("nombre").constrain(equipo);
+
+        ObjectSet result = query.execute();
+        System.out.println("Resultados: " + result.size());
+        if(result == null)
+            System.out.println("...el equipo no existe");
+        else{
+            while(result.hasNext()){
+                System.out.println(result.next().toString());
+            }
+        }
+    }
+
+    private static void busquedaJugadorSegunFuerza(String equipo) {
+        ObjectSet<Equipo> result = db.queryByExample(new Equipo(equipo, null, null));
+
+        List<Jugador> jugadores = result.get(0).getJugadores();
+        int resultados = 0;
+        for (int i = 0; i < jugadores.size(); i++) {
+
+            if (jugadores.get(i).getCaracteristicas().getFuerza() <= 5) {
+                System.out.print(jugadores.get(i).getNombre() + " fuerza: " +
+                        jugadores.get(i).getCaracteristicas().getFuerza() + "\n");
+                resultados++;
+            }
+        }
+        System.out.println("\nResultados: "+resultados);
+    }
+
+
+    private static void busquedaJugadorSegunLiga(String liga) {
+        ObjectSet<Liga> result = db.queryByExample(new Liga(liga, 0, null));
+
+        List<Equipo> equipos = result.get(0).getEquipos();
+        int resultados = 0;
+
+        for (int i = 0; i < equipos.size(); i++) {
+            System.out.println(equipos.get(i).toString());
+            resultados += equipos.get(i).getJugadores().size();
+        }
+        System.out.println("\nResultados: "+resultados);
+    }
+
+
+
+    private static void busquedaCaracteristicasSegunJugador(String nombre, String apellido) {
+
+
+
+    }
+
+
+
+    private static void busquedaEquiposSegunLiga (String nombre){
+
+        ObjectSet<Liga> result = db.queryByExample(new Liga(nombre, 1, null));
+        System.out.println("Resultados: " + result.size());
+        if(result == null)
+            System.out.println("...la liga no existe");
+        else{
+            while(result.hasNext()){
+                System.out.println(result.next().toString());
+            }
+        }
+    }
 
     private static ArrayList<Jugador> genJugadoresAzar(int cantidad){
         Random rnd = new Random();
@@ -181,7 +267,7 @@ public class Main {
 
             Equipo t = new Equipo(
                     "Equipo"+i
-                    ,"Estadio del"+i
+                    ,"Estadio del "+i
                     ,genEntrenadorAzar()
             );
             t.setJugadores(genJugadoresAzar(10));
@@ -202,9 +288,5 @@ public class Main {
             System.out.print("..");
         }
         System.out.print(".Guardados "+equipos.size()+" Equipos");
-
-
     }
-
-
 }

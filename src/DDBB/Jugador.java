@@ -32,6 +32,7 @@ public class Jugador {
         this.apellido = apellido;
         this.altura = altura;
         this.caracteristicas = new Caracteristicas ();
+        setCaracteristicasAzar();
     }
 
     //getters-setters
