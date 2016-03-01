@@ -30,7 +30,7 @@ public class Equipo {
         jugadores.remove(index);
     }
 
-    //constr
+    //constructor
     public Equipo() {}
 
     public Equipo(String nombre) {

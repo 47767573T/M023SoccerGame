@@ -15,7 +15,7 @@ public class Entrenador {
         equipoNuevo.setEntrenador(this);
     }
 
-    //constr
+    //Constructor
     public Entrenador(){}
 
     public Entrenador(String nombre, int anyosExperiencia) {

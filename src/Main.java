@@ -31,6 +31,9 @@ public class Main {
 
             //DEFINIMOS TODA LA LIGA CON VARIABLES AL AZAR PARA TESTEO
 
+            db.store(liga1);
+            db.store(liga2);
+
             ArrayList <Equipo> newTeam = genEquiposAzar(5);
             guardarEquipos(newTeam);
 
@@ -111,8 +114,9 @@ public class Main {
                     }
 
                     case "6": {
-
-
+                        Scanner scn = new Scanner(System.in);
+                        System.out.println("Elige equipo:\n");
+                        busquedaJugadorSegunEntrenador(scn.nextLine());
 
                         break;
                     }
@@ -142,7 +146,10 @@ public class Main {
 
     }//main
 
-
+    /**
+     * Muestra por pantalla los equipos con el nombre dado
+     * @param nombre nombre del equipo
+     */
     private static void busquedaEquipo(String nombre){
 
         ObjectSet<Equipo> result = db.queryByExample(new Equipo(nombre, null, null));
@@ -156,7 +163,10 @@ public class Main {
         }
     }
 
-
+    /**
+     * Muestra por pantalla el equipo dado
+     * @param equipo nombre del equipo
+     */
     private static void busquedaEquipoSODA(String equipo){
 
         Query query = db.query();
@@ -174,6 +184,11 @@ public class Main {
         }
     }
 
+    /**
+     * Muestra por pantalla informacion sobre los jugadores de un equipo dado lo cuales
+     * tienen fuerza por debajo de 5
+     * @param equipo nombre del equipo de los jugadores
+     */
     private static void busquedaJugadorSegunFuerza(String equipo) {
         ObjectSet<Equipo> result = db.queryByExample(new Equipo(equipo, null, null));
 
@@ -190,12 +205,17 @@ public class Main {
         System.out.println("\nResultados: "+resultados);
     }
 
-
+    /**
+     * Muestra por pantalla todos los jugadores de una liga
+     * @param liga nombre de la liga a buscar
+     */
     private static void busquedaJugadorSegunLiga(String liga) {
         ObjectSet<Liga> result = db.queryByExample(new Liga(liga, 0, null));
 
         List<Equipo> equipos = result.get(0).getEquipos();
         int resultados = 0;
+
+        System.out.println(equipos.size());
 
         for (int i = 0; i < equipos.size(); i++) {
             System.out.println(equipos.get(i).toString());
@@ -204,16 +224,46 @@ public class Main {
         System.out.println("\nResultados: "+resultados);
     }
 
-
-
+    /**
+     * Muestra por pantalla las caracteristicas de un jugador
+     * @param nombre nombre del jugador a buscar
+     * @param apellido apellido del nombre a buscar
+     */
     private static void busquedaCaracteristicasSegunJugador(String nombre, String apellido) {
 
+        ObjectSet<Jugador> result = db.queryByExample(new Jugador(null, nombre, apellido, 0));
 
-
+        if(result == null)
+            System.out.println("...el jugador no existe");
+        else{
+            while(result.hasNext()){
+                System.out.println(result.next().toStringCompleto());
+            }
+        }
     }
 
+    /**
+     * Muestra por pantalla los jugadores de un equipo segun un entrenador dado
+     * @param nombre nombre del entrenador a buscar
+     */
+    private static void busquedaJugadorSegunEntrenador(String nombre){
 
+        ObjectSet<Entrenador> result = db.queryByExample(new Entrenador(nombre, 1));
 
+        Equipo equipo = result.get(0).getEquipo();
+        int resultados = 0;
+
+        for (int i = 0; i < equipo.getJugadores().size(); i++) {
+            System.out.println(equipo.getJugadores().get(i).toStringSimple());
+            resultados ++;
+        }
+        System.out.println("\nResultados: "+resultados);
+    }
+
+    /**
+     * Muestra por consola los equipos de una liga
+     * @param nombre nombre de la liga a buscar
+     */
     private static void busquedaEquiposSegunLiga (String nombre){
 
         ObjectSet<Liga> result = db.queryByExample(new Liga(nombre, 1, null));
@@ -227,6 +277,11 @@ public class Main {
         }
     }
 
+    /**
+     * Genera jugadores al azar para la BBDD
+     * @param cantidad numero de jugadores que se solicitan generar
+     * @return Listado de jugadores creados
+     */
     private static ArrayList<Jugador> genJugadoresAzar(int cantidad){
         Random rnd = new Random();
         ArrayList<Jugador> js = new ArrayList<>();
@@ -248,7 +303,10 @@ public class Main {
         return js;
     }
 
-
+    /**
+     * Generador de entrenadores al azar para guardar en la BBDD
+     * @return entrenador creado
+     */
     private static Entrenador genEntrenadorAzar(){
         Random rnd = new Random();
 
@@ -260,6 +318,11 @@ public class Main {
         return entrenador;
     }
 
+    /**
+     * Generador de equipos al azar para guardar en la bbdd
+     * @param cantidad numero de equipos a generar
+     * @return Listado de equipos generados
+     */
     private static ArrayList<Equipo> genEquiposAzar(int cantidad){
         ArrayList<Equipo> equipo = new ArrayList<>();
 
@@ -281,6 +344,10 @@ public class Main {
         return equipo;
     }
 
+    /**
+     * Guarda un listado de equipos dado en la BBDD
+     * @param equipos listado de equipos a guardar
+     */
     private static void guardarEquipos (ArrayList<Equipo> equipos){
         System.out.println("Guardando Equipos.");
         for (int i = 0; i < equipos.size(); i++) {

@@ -22,7 +22,7 @@ public class Liga {
 
     public void cambiarPatrocinador (String patrocinador) { setPatrocinador(patrocinador); }
 
-    //constr
+    //Constructor
     public Liga() {}
 
     public Liga(String nombre, int categoria, String patrocinador) {

@@ -22,7 +22,7 @@ public class Jugador {
         nuevoEquipo.addJugador(this);
     }
 
-   //constr
+   //constructor
 
     public Jugador(){}
 
