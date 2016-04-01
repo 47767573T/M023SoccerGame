@@ -37,6 +37,11 @@ public class Equipo {
         this.nombre = nombre;
     }
 
+    public Equipo(String nombre, String estadio){
+        this.nombre = nombre;
+        this.estadio = estadio;
+    }
+
     public Equipo(String nombre, String estadio, Entrenador entrenador) {
         this.nombre = nombre;
         this.estadio = estadio;

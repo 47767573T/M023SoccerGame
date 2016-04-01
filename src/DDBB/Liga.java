@@ -63,7 +63,7 @@ public class Liga {
     public String toString(){
         String es = "";
         for(int i = 0; i < equipos.size(); i++){
-            es = es + "\n\t" + equipos.get(i).toStringSimple();
+            es = es + "\n\t" + equipos.get(i).getNombre();
         }
         return es;
     }

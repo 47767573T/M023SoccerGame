@@ -46,6 +46,12 @@ public class Main {
             while (on) {
                 System.out.println("\n");
                 System.out.println("MENU:");
+
+                System.out.println("A--> Crear jugador");
+                System.out.println("B--> Crear Equipo");
+                
+                System.out.println("----------------------------------------------------");
+
                 System.out.println("1--> Jugadores de un equipo solicitado");
                 System.out.println("2--> Jugadores de dos equipos solicitados utilizando una consulta SODA");
                 System.out.println("3--> Los jugadores de un equipo que tenga una Fuerza menor o igual que 5");
@@ -53,11 +59,51 @@ public class Main {
                 System.out.println("5--> Características de un jugador dado");
                 System.out.println("6--> Jugadores que pertenece a un entrenador dado");
                 System.out.println("7--> Equipos de una liga en concreto");
+
                 System.out.println("0--> Salir del programa");
                 System.out.println(" ");
                 menu = input.nextLine();
 
                 switch (menu) {
+
+                    case "A": {
+                        System.out.println("Creando jugador:");
+                        System.out.println("\tNombre: ");
+                        String nombre = input.nextLine();
+
+                        System.out.println("\n\tApellido: ");
+                        String apellido = input.nextLine();
+
+                        System.out.println("\n\tAltura: ");
+                        Double altura = input.nextDouble();
+
+                        System.out.println("\n\tDni: ");
+                        String dni = input.nextLine();
+
+                        System.out.println("\n\tNombre del equipo: ");
+                        String equipo = input.nextLine();
+
+                        System.out.println("Generando características random...:");
+
+                        crearJugador(nombre, apellido, altura, dni, equipo);
+
+                        break;
+                    }
+
+                    case "B": {
+                        System.out.println("Creando Equipo:");
+                        System.out.println("\tNombre: ");
+                        String nombre = input.nextLine();
+
+                        System.out.println("\tEstadio: ");
+                        String estadio = input.nextLine();
+
+                        crearEquipo(nombre, estadio);
+
+                        break;
+                    }
+
+
                     case "0": {
                         System.out.println("\n...salir");
                         on = false;
@@ -147,6 +193,57 @@ public class Main {
     }//main
 
     /**
+     *
+     * @param nombre nombre del jugador
+     * @param apellido apellido del jugador
+     * @param altura altura del jugador
+     * @param dni dni del jugador
+     * @param nombreEquipo nombre del equipo al que incorporaremos el jugador
+     */
+    private static void crearJugador(String nombre, String apellido, Double altura, String dni, String nombreEquipo){
+
+        ObjectSet<Equipo> result = db.queryByExample(new Equipo(nombreEquipo, null, null));
+
+        if (result == null) System.out.println("...el equipo no existe");
+
+        else {
+            Jugador p = new Jugador (dni, nombre, apellido, altura);
+            p.setCaracteristicasAzar();
+
+            ObjectSet<Equipo> equipoRes = db.queryByExample(new Equipo(nombreEquipo, null, null));
+
+            Equipo t = equipoRes.get(0);
+            t.addJugador(p);
+            db.store(t);
+            db.commit();
+
+            //Mostramos el equipo
+            busquedaEquipo(nombreEquipo);
+        }
+    }
+
+    private static void crearEquipo(String nombre, String estadio){
+
+
+        Equipo t = new Equipo(nombre, estadio);
+
+        db.store(t);
+        db.commit();
+
+        System.out.println("\n Guardado: ");
+        ObjectSet<Equipo> result = db.queryByExample(new Equipo(nombre, estadio, null));
+
+        if(result == null){ System.out.println("Resultados: " + result.size()); }
+
+        else{
+            while(result.hasNext()){
+                System.out.println(result.next().toStringSimple());
+            }
+        }
+
+    }
+
+    /**
      * Muestra por pantalla los equipos con el nombre dado
      * @param nombre nombre del equipo
      */
@@ -154,8 +251,8 @@ public class Main {
 
         ObjectSet<Equipo> result = db.queryByExample(new Equipo(nombre, null, null));
         System.out.println("Resultados: " + result.size());
-        if(result == null)
-            System.out.println("...el equipo no existe");
+        if(result == null){ System.out.println("Resultados: " + result.size()); }
+
         else{
             while(result.hasNext()){
                 System.out.println(result.next().toString());
